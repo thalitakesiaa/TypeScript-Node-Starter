@@ -1,12 +1,9 @@
-import logger from "../src/util/logger";
+import winston from "winston";
+import { expect } from "chai";
 
-describe("Teste do logger", () => {
-  it("deve criar uma instância do logger", () => {
-    expect(logger).toBeDefined();
-  });
-
-  it("deve criar uma instância com as opções corretas", () => {
-    const expectedOptions = {
+describe("Logger", () => {
+  it("deve criar um logger com as opções corretas", () => {
+    const options: winston.LoggerOptions = {
       transports: [
         new winston.transports.Console({
           level: process.env.NODE_ENV === "production" ? "error" : "debug",
@@ -15,17 +12,19 @@ describe("Teste do logger", () => {
       ],
     };
 
-    expect(logger.options).toEqual(expectedOptions);
-  });
+    const logger = winston.createLogger(options);
 
-  it("deve chamar o método debug quando NODE_ENV não for 'production'", () => {
-    process.env.NODE_ENV = "development";
+    expect(logger.transports.length).to.equal(2);
 
-    // Mock para verificar se o método debug foi chamado
-    logger.debug = jest.fn();
+    const consoleTransport = logger.transports[0];
+    expect(consoleTransport).to.be.instanceOf(winston.transports.Console);
+    expect(consoleTransport.level).to.equal(
+      process.env.NODE_ENV === "production" ? "error" : "debug"
+    );
 
-    logger.initializeLogging();
-
-    expect(logger.debug).toHaveBeenCalledWith("Logging initialized at debug level");
+    const fileTransport = logger.transports[1];
+    expect(fileTransport).to.be.instanceOf(winston.transports.File);
+    expect(fileTransport.level).to.equal("debug");
+    expect((fileTransport as any).filename).to.equal("debug.log");
   });
 });

@@ -2,7 +2,7 @@ import logger from "../src/util/logger";
 import dotenv from "dotenv";
 import fs from "fs";
 
-jest.mock("./logger"); // Mockando o módulo logger
+jest.mock("../src/util/logger"); // Mockando o módulo logger
 
 describe("Testes para o arquivo de configuração", () => {
   beforeEach(() => {
