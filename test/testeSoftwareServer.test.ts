@@ -16,7 +16,7 @@ describe("Teste do servidor Express", () => {
     });
     
     // Executa o código antes de cada teste
-    server = require("./app").default;
+    server = require("../src/app").default;
   });
 
   it("deve chamar o errorHandler em ambiente de desenvolvimento", () => {
@@ -29,10 +29,10 @@ describe("Teste do servidor Express", () => {
     server;
     expect(app.listen).toHaveBeenCalledWith(app.get("port"), expect.any(Function));
     expect(consoleSpy).toHaveBeenCalledWith(
-      "  App is running at http://localhost:%d in %s mode",
+      "  App está rodando em http://localhost:%d no %s modo",
       app.get("port"),
       app.get("env")
     );
-    expect(consoleSpy).toHaveBeenCalledWith("  Press CTRL-C to stop\n");
+    expect(consoleSpy).toHaveBeenCalledWith("  Aperte CTRL-C para parar\n");
   });
 });

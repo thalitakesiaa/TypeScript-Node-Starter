@@ -14,7 +14,7 @@ describe("Testes para as funções da API", () => {
     req = {} as Request;
     res = {
       render: jest.fn(),
-    } as Response;
+    } as unknown as Response;
     next = jest.fn() as NextFunction;
   });
 
@@ -26,86 +26,86 @@ describe("Testes para as funções da API", () => {
     it("deve chamar res.render com os parâmetros corretos", () => {
       getApi(req, res);
       expect(res.render).toHaveBeenCalledWith("api/index", {
-        title: "API Examples",
+        title: "Exemplos de API",
       });
     });
   });
 
   describe("Teste para getFacebook", () => {
     it("deve chamar res.render com os parâmetros corretos quando a requisição é bem-sucedida", () => {
-      const user = {
+      const usuario = {
         tokens: [
           {
-            kind: "facebook",
+            type: "facebook",
             accessToken: "token",
           },
         ],
         facebook: "user_facebook_id",
-      } as UserDocument;
+      } as unknown as UserDocument;
 
-      const results = {
+      const resultados = {
         id: "user_id",
-        name: "John Doe",
-        email: "john.doe@example.com",
-        
+        nome: "JDesconhecido",
+        email: "desconhecido@example.com",
+        // outros campos do perfil do Facebook
       };
 
-      const graphCallback = jest.fn((err, callbackResults) => {
-        callbackResults(results);
+      const callbackGraph = jest.fn((err, resultadosCallback) => {
+        resultadosCallback(resultados);
       });
 
       (graph.get as jest.Mock).mockImplementationOnce((_, callback) => {
-        callback(null, graphCallback);
+        callback(null, callbackGraph);
       });
 
-      req.user = user;
+      req.user = usuario;
 
       getFacebook(req, res, next);
 
-      expect(graph.setAccessToken).toHaveBeenCalledWith(user.tokens[0].accessToken);
+      expect(graph.setAccessToken).toHaveBeenCalledWith(usuario.tokens[0].accessToken);
       expect(graph.get).toHaveBeenCalledWith(
-        `${user.facebook}?fields=id,name,email,first_name,last_name,gender,link,locale,timezone`,
+        `${usuario.facebook}?fields=id,nome,email,first_name,last_name,gender,link,locale,timezone`,
         expect.any(Function)
       );
       expect(res.render).toHaveBeenCalledWith("api/facebook", {
-        title: "Facebook API",
-        profile: results,
+        title: "API do Facebook",
+        perfil: resultados,
       });
       expect(next).not.toHaveBeenCalled();
     });
 
     it("deve chamar next com o erro quando a requisição falhar", () => {
-      const user = {
+      const usuario = {
         tokens: [
           {
-            kind: "facebook",
+            type: "facebook",
             accessToken: "token",
           },
         ],
         facebook: "user_facebook_id",
-      } as UserDocument;
+      } as unknown as UserDocument;
 
-      const error = new Error("Erro na requisição");
+      const erro = new Error("Erro na requisição");
 
-      const graphCallback = jest.fn((err, callbackResults) => {
-        callbackResults(null);
+      const callbackGraph = jest.fn((err, resultadosCallback) => {
+        resultadosCallback(null);
       });
 
       (graph.get as jest.Mock).mockImplementationOnce((_, callback) => {
-        callback(error, graphCallback);
+        callback(erro, callbackGraph);
       });
 
-      req.user = user;
+      req.user = usuario;
 
       getFacebook(req, res, next);
 
-      expect(graph.setAccessToken).toHaveBeenCalledWith(user.tokens[0].accessToken);
+      expect(graph.setAccessToken).toHaveBeenCalledWith(usuario.tokens[0].accessToken);
       expect(graph.get).toHaveBeenCalledWith(
-        `${user.facebook}?fields=id,name,email,first_name,last_name,gender,link,locale,timezone`,
+        `${usuario.facebook}?fields=id,nome,email,first_name,last_name,gender,link,locale,timezone`,
         expect.any(Function)
       );
       expect(res.render).not.toHaveBeenCalled();
-      expect(next).toHaveBeenCalledWith(error);
+      expect(next).toHaveBeenCalledWith(erro);
     });
   });
 });
