@@ -4,9 +4,7 @@ import { postUpdatePassword } from "../src/controllers/user";
 import { UserDocument } from "../src/models/User";
 import sinon from "sinon";
 
-// Suponhamos que seu modelo UserDocument possua a estrutura correta
-// Substitua 'UserDocument' pela definição real do seu modelo
-// Defina uma classe que implementa o tipo UserDocument para uso no stub
+// classe que implementa o tipo UserDocument para uso no stub
 const user: UserDocument = {
     id: "userId",
     password: "oldPassword",
@@ -51,9 +49,7 @@ describe("postUpdatePassword function", () => {
         expect(findByIdStub.calledOnce).to.be.true;
         findByIdStub.restore();
 
-        // Verifique se as ações esperadas ocorreram
-        // Por exemplo, você pode verificar se a senha do usuário foi atualizada com sucesso
+
     });
 
-    // Adicione mais testes para outros cenários, como senhas não correspondentes e erros no salvamento do usuário
 });
