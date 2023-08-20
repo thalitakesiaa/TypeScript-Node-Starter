@@ -1,5 +1,6 @@
 
-import { User, UserDocument, AuthToken } from "../models/User";
+import { User, UserDocument, AuthToken } from "../src/models/User";
+import mongoose from "mongoose";
 import "../config/passport";
 
 
@@ -7,7 +8,7 @@ describe('Teste de Atualização de Perfil', () => {
   // Antes de cada teste, limpe o banco de dados ou configure uma estratégia de isolamento
   beforeEach(async () => {
     // Conecte ao banco de dados de teste (ou limpe o banco se necessário)
-    await mongoose.connect('mongodb://localhost/seu_banco_de_teste', {
+    await mongoose.connect('mongodb://localhost:3000, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -21,7 +22,7 @@ describe('Teste de Atualização de Perfil', () => {
 
   it('deve atualizar o perfil com sucesso', async () => {
     const response = await request(app)
-      .post('/account')
+      .post('./account')
       .send({
         email: 'novo_email@example.com',
         name: 'Novo Nome',
