@@ -23,7 +23,7 @@ export const getLogin = (req: Request, res: Response): void => {
     });
 };
 
-/**
+/****
  * Sign in using email and password.
  * @route POST /login
  */
