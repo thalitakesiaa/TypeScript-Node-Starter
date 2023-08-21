@@ -10,7 +10,7 @@ describe("Autenticação de Usuário", () => {
 
   afterAll(() => {
     // Restaurar a saída de log
-    console.log = console._log;
+    console.log = console.log;
   });
 
   it("deve permitir que um usuário válido faça login", async () => {
@@ -53,7 +53,7 @@ describe("Autenticação de Usuário", () => {
 
   afterAll(() => {
     // Restaurar a saída de log
-    console.log = console._log;
+    console.log = console.log;
   });
 
   it("deve permitir que um usuário válido faça login", async () => {
