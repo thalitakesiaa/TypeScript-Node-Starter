@@ -1,55 +1,44 @@
-import { expect } from "chai";
-import { Response, Request, NextFunction } from "express";
-import { postUpdatePassword } from "../src/controllers/user"; 
-import { UserDocument } from "../src/models/User";
-import sinon from "sinon";
+import request from "supertest";
+import { User, UserDocument } from "../src/models/User";
+import app from "../src/app";
 
-// classe que implementa o tipo UserDocument para uso no stub
-const user: UserDocument = {
-    id: "userId",
-    password: "oldPassword",
-    save: (callback) => callback(null, user), // Simule o save
-};
+describe("Testes de Alterar senha", () => {
+    let user: UserDocument;
 
-describe("postUpdatePassword function", () => {
-    it("should handle password update", async () => {
-        const user: UserDocument = {
-            id: "userId",
-            password: "oldPassword",
-            save: (callback) => callback(null, user), // Simule o save
-        };
-
-        const req: Request = {
-            body: {
-                password: "newPassword",
-                confirmPassword: "newPassword",
-            },
-            user,
-        } as unknown as Request;
-
-        const res: Response = {
-            redirect: (url: string) => {
-                expect(url).to.equal("/account");
-            },
-        } as unknown as Response;
-
-        const findByIdStub = sinon.stub(UserDocument, "findById").callsFake((
-            id: string,
-            callback:(err: any, user: UserDocument | null) => void) => {
-                // Simulando um objeto UserDocument
-                callback(null, user);
-            });
-
-        const next: NextFunction = (err: any) => {
-            expect(err).to.be.null;
-        };
-
-        await postUpdatePassword(req, res, next);
-        
-        expect(findByIdStub.calledOnce).to.be.true;
-        findByIdStub.restore();
-
-
+    beforeAll(async () => {
+        // Cria um usuário de teste no banco de dados
+        user = await User.create({
+            email: "teste@example.com",
+            password: "password",
+        });
     });
 
+    afterAll(async () => {
+        // Limpa os dados de teste após os testes
+        await User.deleteMany({});
+    });
+
+    it("Deve tratar usuario com informações inválidas", async () => {
+        const response = await request(app)
+            .post("/account/password")
+            .send({
+                email: "invalid@example.com",
+                password: "password",
+            });
+
+        expect(response.status).toBe(302); // Verifica se o redirecionamento ocorreu
+        expect(response.header.location).toBe("/login"); // Verifique se o usuário foi redirecionado de volta para a página de alterar senha
+    });
+
+    it("Verifica se a alteração foi feita com sucesso", async () => {
+        const response = await request(app)
+            .post("/account/password")
+            .send({
+                email: "teste@example.com",
+                password: "novapassword",
+            });
+
+        expect(response.status).toBe(302); // Verifica se o redirecionamento ocorreu
+        expect(response.header.location).toBe("/login"); // Verifica se o usuário foi redirecionado de volta para a página inicial
+    });
 });
