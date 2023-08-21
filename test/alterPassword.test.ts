@@ -8,7 +8,7 @@ describe("Testes de Alterar senha", () => {
     beforeAll(async () => {
         // Cria um usuário de teste no banco de dados
         user = await User.create({
-            email: "teste@example.com",
+            email: "teste@email.com",
             password: "password",
         });
     });
@@ -22,7 +22,7 @@ describe("Testes de Alterar senha", () => {
         const response = await request(app)
             .post("/account/password")
             .send({
-                email: "invalid@example.com",
+                email: "emailinvalido@email.com",
                 password: "password",
             });
 
@@ -34,7 +34,7 @@ describe("Testes de Alterar senha", () => {
         const response = await request(app)
             .post("/account/password")
             .send({
-                email: "teste@example.com",
+                email: "teste@email.com",
                 password: "novapassword",
             });
 
