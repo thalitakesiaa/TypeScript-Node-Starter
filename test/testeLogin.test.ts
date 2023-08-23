@@ -47,7 +47,7 @@ describe("Testes de Login", () => {
             .post("/login")
             .send({
                 email: "invalid@example.com",
-                password: "testpassword",
+                password: "testepassword",
             });
 
         expect(response.status).toBe(302); // Verifica se o redirecionamento ocorreu
